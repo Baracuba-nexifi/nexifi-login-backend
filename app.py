@@ -16,7 +16,9 @@ def verify():
     ip_address = request.form.get('ip')
     password = request.form.get('password')
 
-    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password={password}")
+    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password=<{len(password or '')} chars>")
+print(f"[DEBUG] Comparing password: '{password.strip()}' == '{LOGIN_PASSWORD}' → {password.strip() == LOGIN_PASSWORD}")
+
 
     if not all([mac_address, ip_address, password]):
         print("[DEBUG] Missing parameter")
