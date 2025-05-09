@@ -12,13 +12,14 @@ LOGIN_PASSWORD = 'guest 123'
 
 @app.route('/verify', methods=['POST'])
 def verify():
-    mac_address = request.form.get('mac')
-    ip_address = request.form.get('ip')
-    password = request.form.get('password')
+    print("[DEBUG] /verify route hit")
 
-    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password=<{len(password or '')} chars>")
+    mac_address = request.form.get('mac', '')
+    ip_address = request.form.get('ip', '')
+    password = request.form.get('password', '')
+
+    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password=<{len(password)} chars>")
     print(f"[DEBUG] Comparing password: '{password.strip()}' == '{LOGIN_PASSWORD}' → {password.strip() == LOGIN_PASSWORD}")
-
 
     if not all([mac_address, ip_address, password]):
         print("[DEBUG] Missing parameter")
