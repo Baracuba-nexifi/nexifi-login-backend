@@ -1,3 +1,4 @@
+
 from flask import Flask, request, redirect
 import routeros_api
 import traceback
@@ -13,21 +14,20 @@ LOGIN_PASSWORD = 'guest 123'
 @app.route('/verify', methods=['POST'])
 def verify():
     print("🔁 Entered verify()")
-    print("[DEBUG] /verify route hit")
 
-    mac_address = request.form.get('mac', '')
-    ip_address = request.form.get('ip', '')
-    password = request.form.get('password', '')
+    mac_address = request.form.get('mac', '').strip()
+    ip_address = request.form.get('ip', '').strip()
+    password = request.form.get('password', '').strip()
 
-    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password=<{len(password)} chars>")
-    print(f"[DEBUG] Comparing password: '{password.strip()}' == '{LOGIN_PASSWORD}' → {password.strip() == LOGIN_PASSWORD}")
+    print(f"[DEBUG] Received: mac={mac_address}, ip={ip_address}, password length={len(password)}")
+    print(f"[DEBUG] Comparing: '{password}' == '{LOGIN_PASSWORD}'")
 
     if not all([mac_address, ip_address, password]):
-        print("[DEBUG] Missing parameter")
+        print("[DEBUG] Missing parameters")
         return "Missing required parameters", 400
 
-    if password.strip() != LOGIN_PASSWORD:
-        print("[DEBUG] Wrong password")
+    if password != LOGIN_PASSWORD:
+        print("[DEBUG] Invalid password")
         return "Invalid password", 403
 
     try:
@@ -43,19 +43,15 @@ def verify():
         hotspot = api.get_resource('/ip/hotspot/active')
 
         print(f"[DEBUG] Adding hotspot user: MAC={mac_address}, IP={ip_address}")
-        hotspot.add(
-            mac_address=mac_address,
-            address=ip_address
-        )
+        hotspot.add(mac_address=mac_address, address=ip_address)
 
         connection.disconnect()
-        print("[DEBUG] Success — redirecting to /success")
         return redirect('/success')
 
     except Exception as e:
-        print(f"[ERROR] RouterOS API Error: {str(e)}")
+        print(f"[ERROR] {str(e)}")
         print(traceback.format_exc())
-        return "Error", 500
+        return "Server error", 500
 
 @app.route('/success')
 def success():
