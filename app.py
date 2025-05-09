@@ -27,6 +27,7 @@ def verify():
         return "Invalid password", 403
 
     try:
+        print(f"[DEBUG] Connecting to router {ROUTER_IP} on port {ROUTER_PORT}")
         connection = routeros_api.RouterOsApiPool(
             host=ROUTER_IP,
             username=ROUTER_USER,
@@ -37,12 +38,14 @@ def verify():
         api = connection.get_api()
         hotspot = api.get_resource('/ip/hotspot/active')
 
+        print(f"[DEBUG] Adding hotspot user: MAC={mac_address}, IP={ip_address}")
         hotspot.add(
             mac_address=mac_address,
             address=ip_address
         )
 
         connection.disconnect()
+        print("[DEBUG] Success — redirecting to /success")
         return redirect('/success')
 
     except Exception as e:
