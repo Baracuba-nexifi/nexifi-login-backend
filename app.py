@@ -12,6 +12,7 @@ LOGIN_PASSWORD = 'guest 123'
 
 @app.route('/verify', methods=['POST'])
 def verify():
+    print("🔁 Entered verify()")
     print("[DEBUG] /verify route hit")
 
     mac_address = request.form.get('mac', '')
